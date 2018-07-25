@@ -78,6 +78,7 @@ func (s *pgService) FindAll(_ context.Context) ([]domain.Category, error) {
 }
 
 // Delete implement Delete for Category service
+// a2ab5d7a-9aa5-4ec4-afee-6962d559ad68
 func (s *pgService) Delete(_ context.Context, p *domain.Category) error {
 	old := domain.Category{Model: domain.Model{ID: p.ID}}
 	if err := s.db.Find(&old).Error; err != nil {
@@ -86,5 +87,17 @@ func (s *pgService) Delete(_ context.Context, p *domain.Category) error {
 		}
 		return err
 	}
+
+	// fmt.Println(p.ID)
+	defer DeleteAllBooksBelong(s, p.ID)
+
 	return s.db.Delete(old).Error
+}
+
+// Delete all book belong category with id
+func DeleteAllBooksBelong(s *pgService, id domain.UUID) error {
+	if err := s.db.Where("category_id = ?", id).Delete(&domain.Book{}); err != nil {
+		return nil
+	}
+	return errors.New("Delete book error")
 }
