@@ -6,6 +6,8 @@ import (
 	"github.com/jinzhu/gorm"
 
 	"github.com/LuanNgoMinh/example-go/domain"
+
+	"errors"
 )
 
 // pgService implmenter for Category serivce in postgres
@@ -20,9 +22,25 @@ func NewPGService(db *gorm.DB) Service {
 	}
 }
 
+// Check category name is unique
+func CategoryIsUnique(s *pgService, name string) error {
+	category := domain.Category{}
+	if err := s.db.Where(domain.Category{Name: name}).Find(&category).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return gorm.ErrRecordNotFound
+		}
+	}
+
+	return nil
+}
+
 // Create implement Create for Category service
 func (s *pgService) Create(_ context.Context, p *domain.Category) error {
-	return s.db.Create(p).Error
+	if err := CategoryIsUnique(s, p.Name); err != nil {
+		return s.db.Create(p).Error
+	}
+
+	return errors.New("Category name has already existed")
 }
 
 // Update implement Update for Category service

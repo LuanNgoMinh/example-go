@@ -10,6 +10,8 @@ var (
 	ErrUnknown        = errUnknown{}
 	ErrNameIsRequired = errNameIsRequired{}
 	ErrNameLength     = errNameLength{}
+	ErrNameUnique     = errNameUnique{}
+	ErrNameExisted    = errNameExisted{}
 	ErrRecordNotFound = errRecordNotFound{}
 )
 
@@ -58,4 +60,24 @@ func (errNameLength) Error() string {
 
 func (errNameLength) StatusCode() int {
 	return http.StatusBadRequest
+}
+
+type errNameUnique struct{}
+
+func (errNameUnique) Error() string {
+	return "Name have already existed"
+}
+
+func (errNameUnique) StatusCode() int {
+	return http.StatusBadRequest
+}
+
+type errNameExisted struct{}
+
+func (errNameExisted) Error() string {
+	return "Name have not already existed"
+}
+
+func (errNameExisted) StatusCode() int {
+	return http.StatusNotFound
 }
