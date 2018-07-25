@@ -6,6 +6,8 @@ import (
 	"github.com/jinzhu/gorm"
 
 	"github.com/LuanNgoMinh/example-go/domain"
+
+	"errors"
 )
 
 // pgService implmenter for Book serivce in postgres
@@ -20,13 +22,29 @@ func NewPGService(db *gorm.DB) Service {
 	}
 }
 
+func bookIsExisted(s *pgService, name string) bool {
+	book := domain.Book{}
+	if err := s.db.Where(domain.Book{Name: name}).Find(&book).Error; err != nil {
+		return false
+	}
+	return true
+}
+
 // Create implement Create for Book service
 func (s *pgService) Create(_ context.Context, p *domain.Book) error {
-	return s.db.Create(p).Error
+	if !bookIsExisted(s, p.Name) {
+		return s.db.Create(p).Error
+	} else {
+		return errors.New(string(p.Name) + " have already exists")
+	}
 }
 
 // Update implement Update for Book service
 func (s *pgService) Update(_ context.Context, p *domain.Book) (*domain.Book, error) {
+	if !bookIsExisted(s, p.Name) {
+		return nil, errors.New(string(p.Name) + " have already exists")
+	}
+
 	old := domain.Book{Model: domain.Model{ID: p.ID}}
 	if err := s.db.Find(&old).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
