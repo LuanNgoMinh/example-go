@@ -61,6 +61,7 @@ func main() {
 
 			CategoryService: service.Compose(
 				categorySvc.NewPGService(pgDB),
+				categorySvc.ValidationMiddleware(),
 			).(categorySvc.Service),
 		}
 	)
