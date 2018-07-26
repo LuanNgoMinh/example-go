@@ -56,7 +56,7 @@ Time spent: **{{time_spent}}** hours spent in total
   * [x] validate name of category is not empty and length > 5 characters.
   * [x] validate name of category not existed yet (for both create and update).
 
-* [ ] API must be able to CRUD books:
+* [x] API must be able to CRUD books:
   * [x] Each book should have the following fields:
     * id (uuid)
     * name (string)
