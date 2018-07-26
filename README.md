@@ -75,7 +75,7 @@ Time spent: **{{time_spent}}** hours spent in total
   * [x] validate description of a book is not empty and length > 5 characters. if not reject it with error message
   
 * [ ] API must be able to make action: user lend a book:
-  * [ ] API should have the following fields:
+  * [x] API should have the following fields:
     * id (uuid)
     * book_id (uuid)
     * user_id (uuid)
