@@ -30,12 +30,21 @@ func bookIsExisted(s *pgService, name string) bool {
 	return true
 }
 
+func categoryExisted(s *pgService, id domain.UUID) bool {
+	category := &domain.Category{}
+	if err := s.db.Where("ID = ?", id).Find(category).Error; err == nil {
+		return true
+	}
+
+	return false
+}
+
 // Create implement Create for Book service
 func (s *pgService) Create(_ context.Context, p *domain.Book) error {
-	if !bookIsExisted(s, p.Name) {
+	if !bookIsExisted(s, p.Name) && categoryExisted(s, p.Category_id) {
 		return s.db.Create(p).Error
 	} else {
-		return errors.New(string(p.Name) + " have already exists")
+		return errors.New(string(p.Name) + " have already exists or category id not exists")
 	}
 }
 
